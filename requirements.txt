@@ -1,0 +1,4 @@
+# demand-staffing-optimizer: forecasting (MA7 + Prophet) + GA optimization
+pandas>=1.3.0
+numpy>=1.20.0
+prophet>=1.1.0
