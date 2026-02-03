@@ -12,8 +12,8 @@ Usage:
 import argparse
 from pathlib import Path
 
-from demand_forecasting.config import OUTPUT_DIR, PROJECT_ROOT
-from demand_forecasting.optimization import (
+from demand_staffing.config import OUTPUT_DIR, PROJECT_ROOT
+from demand_staffing.optimization import (
     load_forecast_weekly,
     load_salary_and_staffing,
     ga_optimize,

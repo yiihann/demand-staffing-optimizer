@@ -1,8 +1,9 @@
 """
-Demand forecasting for capacity planning.
+Demand forecasting and staffing optimization for capacity planning.
 
 Uses a 7-day moving average (MA7) of daily counts and Prophet for time-series
-forecasting, with optional per-region calibration and grid search.
+forecasting, with optional per-region calibration and grid search. Includes
+GA-based staffing optimization to maximize net profit under real-world constraints.
 """
 
 from .config import DEFAULT_SPLIT_DATE, PROPHET_BASELINE_PARAMS

@@ -10,22 +10,22 @@ The system guides the user from raw event data (e.g. daily sign-ups by region) t
 
 The project is organized into a Python package and two entrypoint scripts:
 
-- **`demand_forecasting/config.py`**  
+- **`demand_staffing/config.py`**  
   Paths, train/test split date, and default Prophet and GA parameters.
 
-- **`demand_forecasting/data_loader.py`**  
+- **`demand_staffing/data_loader.py`**  
   Loads raw CSV, aggregates to daily counts (global or by region), computes 7-day moving average (MA7), and prepares Prophet-ready train/test splits.  
   **Role**: Data ingestion and preprocessing.
 
-- **`demand_forecasting/forecast.py`**  
+- **`demand_staffing/forecast.py`**  
   Builds Prophet models (weekly/yearly/monthly seasonality, additive), runs hyperparameter grid search, and evaluates MAPE.  
   **Role**: Time-series forecasting.
 
-- **`demand_forecasting/export.py`**  
+- **`demand_staffing/export.py`**  
   Writes forecast CSVs per region and/or combined.  
   **Role**: Output of forecasting stage.
 
-- **`demand_forecasting/optimization.py`**  
+- **`demand_staffing/optimization.py`**  
   Loads forecast and salary/staffing data, simulates capacity and backlog (FIFO, 60-day limit), and runs a Genetic Algorithm over weekly staffing deltas to maximize net profit (revenue − salary − hire cost − fire cost − lost revenue).  
   **Role**: Staffing optimization.
 

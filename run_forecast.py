@@ -14,22 +14,22 @@ Usage:
 import argparse
 from pathlib import Path
 
-from demand_forecasting.config import (
+from demand_staffing.config import (
     DEFAULT_DATA_PATH,
     DEFAULT_SPLIT_DATE,
     OUTPUT_DIR,
     PROPHET_BASELINE_PARAMS,
 )
-from demand_forecasting.data_loader import (
+from demand_staffing.data_loader import (
     prepare_global_ma7,
     prepare_per_region_ma7,
 )
-from demand_forecasting.forecast import (
+from demand_staffing.forecast import (
     fit_and_forecast,
     grid_search_prophet,
     evaluate_mape,
 )
-from demand_forecasting.export import export_forecasts_to_csv
+from demand_staffing.export import export_forecasts_to_csv
 
 
 # ISO 2-letter codes for Prophet built-in country holidays
