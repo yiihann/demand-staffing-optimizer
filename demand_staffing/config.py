@@ -42,3 +42,13 @@ PROPHET_GRID_REFINED = {
 
 # MA7 window
 MA7_WINDOW = 7
+
+# Salary/staffing data paths
+DEFAULT_SALARY_PATH = DATA_DIR / "[BADSS case] Agent Salary and Eligibility Threshold - data.csv"
+DEFAULT_STAFFING_PATH = DATA_DIR / "[BADSS case] Existing Agent Staffing - data.csv"
+
+# Column name constants
+BUDGET_COL = "Projected_Annual_Budget"
+THRESHOLD_COL = "Advertiser_Eligibility_Threshold_USD"
+SALARY_COL = "Annual_Agent_Salary_USD"
+AGENT_COUNT_COL = "Existing_Agent_Count"

@@ -121,8 +121,6 @@ def prepare_per_region_ma7(
     Load data, aggregate by region and date, compute MA7 per region.
     Returns dict: region -> (train_df, test_df) in Prophet format.
     """
-    from .config import DEFAULT_SPLIT_DATE
-
     split_date = pd.to_datetime(split_date or DEFAULT_SPLIT_DATE)
     counts = load_daily_counts(data_path, region_col=REGION_COL)
     counts = compute_ma7(counts, date_col=DATE_COL, value_col="SignUps", region_col=REGION_COL)

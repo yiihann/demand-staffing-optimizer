@@ -13,7 +13,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-from .config import DATA_DIR, OUTPUT_DIR, PROJECT_ROOT
+from .config import DATA_DIR, OUTPUT_DIR, DEFAULT_SALARY_PATH, DEFAULT_STAFFING_PATH, SALARY_COL, AGENT_COUNT_COL, THRESHOLD_COL
 
 
 # --- Report parameters ---
@@ -38,7 +38,8 @@ def load_forecast_weekly(forecast_path: Path, num_weeks: int = 52) -> np.ndarray
     """
     df = pd.read_csv(forecast_path)
     df["ds"] = pd.to_datetime(df["ds"])
-    monthly = df.groupby("ds")["yhat"].sum().sort_index()
+    df = df.set_index("ds")
+    monthly = df["yhat"].resample("MS").sum().sort_index()
     weeks = []
     for ts in monthly.index:
         vol = float(monthly.loc[ts])
@@ -62,9 +63,11 @@ def load_salary_and_staffing(
     """
     Load salary and existing staffing CSVs. Returns (avg_annual_salary, total_initial_agents, avg_eligibility_threshold).
     """
-    base = DATA_DIR
-    salary_path = salary_path or base / "[BADSS case] Agent Salary and Eligibility Threshold - data.csv"
-    staffing_path = staffing_path or base / "[BADSS case] Existing Agent Staffing - data.csv"
+    salary_path = salary_path or DEFAULT_SALARY_PATH
+    staffing_path = staffing_path or DEFAULT_STAFFING_PATH
+    for p, label in [(salary_path, "Salary"), (staffing_path, "Staffing")]:
+        if not Path(p).exists():
+            raise FileNotFoundError(f"{label} data not found: {p}")
     salary_df = pd.read_csv(salary_path)
     staffing_df = pd.read_csv(staffing_path)
     # Merge on country
@@ -74,15 +77,15 @@ def load_salary_and_staffing(
         right_on="Country",
         how="left",
     )
-    merge = merge.dropna(subset=["Annual_Agent_Salary_USD", "Existing_Agent_Count"])
-    total_agents = int(merge["Existing_Agent_Count"].sum())
+    merge = merge.dropna(subset=[SALARY_COL, AGENT_COUNT_COL])
+    total_agents = int(merge[AGENT_COUNT_COL].sum())
     if total_agents == 0:
         avg_salary = 50000.0
         avg_threshold = 20000.0
     else:
-        weighted_salary = (merge["Annual_Agent_Salary_USD"] * merge["Existing_Agent_Count"]).sum()
+        weighted_salary = (merge[SALARY_COL] * merge[AGENT_COUNT_COL]).sum()
         avg_salary = weighted_salary / total_agents
-        avg_threshold = merge["Advertiser_Eligibility_Threshold_USD"].mean()
+        avg_threshold = merge[THRESHOLD_COL].mean()
     return avg_salary, total_agents, avg_threshold
 
 
@@ -125,7 +128,7 @@ def simulate(
     for t in range(1, T + 1):
         # Hires at week s become active at week s + weeks_ramp
         hires_active_by_t = sum(
-            max(0, int(deltas[s])) for s in range(max(0, t - weeks_ramp + 1))
+            max(0, int(deltas[s])) for s in range(max(0, t - weeks_ramp))
         )
         fires_by_t = sum(max(0, int(-deltas[s])) for s in range(t))
         A_active[t] = initial_agents + hires_active_by_t - fires_by_t
@@ -292,7 +295,7 @@ def staffing_plan_from_chromosome(
     A_active[0] = initial_agents
     for t in range(1, T + 1):
         hires_active_by_t = sum(
-            max(0, int(deltas[s])) for s in range(max(0, t - weeks_ramp + 1))
+            max(0, int(deltas[s])) for s in range(max(0, t - weeks_ramp))
         )
         fires_by_t = sum(max(0, int(-deltas[s])) for s in range(t))
         A_active[t] = initial_agents + hires_active_by_t - fires_by_t

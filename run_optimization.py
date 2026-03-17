@@ -12,7 +12,7 @@ Usage:
 import argparse
 from pathlib import Path
 
-from demand_staffing.config import OUTPUT_DIR, PROJECT_ROOT
+from demand_staffing.config import OUTPUT_DIR
 from demand_staffing.optimization import (
     load_forecast_weekly,
     load_salary_and_staffing,
@@ -28,7 +28,7 @@ def main():
     p.add_argument(
         "--forecast",
         type=Path,
-        default=PROJECT_ROOT / "results_prediction" / "combined_predictions.csv",
+        default=OUTPUT_DIR / "forecasts" / "combined_predictions.csv",
         help="Path to combined forecast CSV (ds, yhat, Country)",
     )
     p.add_argument("--weeks", type=int, default=52, help="Optimization horizon (weeks)")

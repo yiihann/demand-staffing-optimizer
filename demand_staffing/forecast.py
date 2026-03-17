@@ -64,8 +64,8 @@ def build_prophet_model(
     if country_holidays:
         try:
             model.add_country_holidays(country_name=country_holidays)
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"Warning: could not add holidays for '{country_holidays}': {e}")
     return model
 
 
@@ -81,7 +81,7 @@ def evaluate_mape(
     """
     fc = forecast[[date_col, pred_col]].set_index(date_col)
     test = test_df[[date_col, value_col]].set_index(date_col)
-    aligned = fc.reindex(test.index, method="nearest")
+    aligned = fc.reindex(test.index).ffill().bfill()
     denom = test[value_col].replace(0, np.nan)
     return float(np.nanmean(np.abs(aligned[pred_col] - test[value_col]) / denom))
 
